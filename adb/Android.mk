@@ -16,7 +16,7 @@ EXTRA_SRCS :=
 ifeq ($(HOST_OS),linux)
   USB_SRCS := usb_linux.c
   EXTRA_SRCS := get_my_path_linux.c
-  LOCAL_LDLIBS += -lrt -lncurses -lpthread
+  LOCAL_LDLIBS += -lrt -lpthread
 endif
 
 ifeq ($(HOST_OS),darwin)
@@ -121,6 +121,7 @@ LOCAL_SRC_FILES := \
 	services.c \
 	file_sync_service.c \
 	jdwp_service.c \
+	framebuffer_service.c \
 	remount_service.c \
 	usb_linux_client.c \
 	log_service.c \
@@ -135,8 +136,12 @@ ifeq ($(TARGET_ARCH),arm)
 LOCAL_CFLAGS += -DANDROID_GADGET=1
 endif
 
-ifneq ($(TARGET_RECOVERY_WRITE_MISC_PART),)
-        LOCAL_CFLAGS += -DRECOVERY_WRITE_MISC_PART='$(TARGET_RECOVERY_WRITE_MISC_PART)'
+ifneq ($(TARGET_RECOVERY_PRE_COMMAND),)
+	LOCAL_CFLAGS += -DRECOVERY_PRE_COMMAND='$(TARGET_RECOVERY_PRE_COMMAND)'
+endif
+
+ifeq ($(BOARD_USE_SCREENCAP),true)
+	LOCAL_CFLAGS += -DUSE_SCREENCAP
 endif
 
 LOCAL_MODULE := adbd
